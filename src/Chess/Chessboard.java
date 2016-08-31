@@ -37,6 +37,7 @@ public class Chessboard extends JPanel {
         }
         if(mouse != null && dragged != null) {
             dragged.draw((Graphics2D)g, mouse.x, mouse.y);
+//            System.out.println("x:"+mouse.x + " y:"+mouse.y);
         }
     }
 
@@ -63,20 +64,31 @@ public class Chessboard extends JPanel {
 
         this.addMouseListener(new MouseAdapter(){
             public void mousePressed(MouseEvent ev) {
-                dragged = new DragDecorator(take((ev.getX()-ZEROX)/ Piece.TILESIZE, (ev.getY()-ZEROY)/Piece.TILESIZE));
-                mouse = ev.getPoint();
+                IPiece piece = take((ev.getX()-ZEROX)/ Piece.TILESIZE, (ev.getY()-ZEROY)/Piece.TILESIZE);
+                if(piece != null) {
+                    dragged = new DragDecorator(piece);
+                    mouse = ev.getPoint();
+//                    System.out.println("mousePressed " + mouse);
+                }
             }
 
             public void mouseReleased(MouseEvent ev) {
-                drop(dragged.getDecorated(), (ev.getX()-ZEROX)/Piece.TILESIZE, (ev.getY()-ZEROY)/Piece.TILESIZE);
+                if(dragged != null) {
+                    drop(dragged.getDecorated(), (ev.getX() - ZEROX) / Piece.TILESIZE, (ev.getY() - ZEROY) / Piece.TILESIZE);
+                }
                 dragged = null;
+                mouse = null;
             }
         });
+
         this.addMouseMotionListener(new MouseMotionAdapter(){
             public void mouseDragged(MouseEvent ev)	{
-                dragged.setAlphaX(ev.getX() - mouse.x);
-                dragged.setAlphaY(ev.getY() - mouse.y);
-                repaint();
+                if(dragged != null) {
+                    dragged.setAlphaX(ev.getX() - mouse.x);
+                    dragged.setAlphaY(ev.getY() - mouse.y);
+//                    System.out.println("mouseEventX " + (ev.getX() - mouse.x) + " MouseEventY" + (ev.getY() - mouse.y));
+                    repaint();
+                }
             }
         });
     }
